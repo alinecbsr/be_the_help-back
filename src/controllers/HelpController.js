@@ -2,7 +2,21 @@ const connection = require('../database/connection');
 
 module.exports = {
   async index(request, response) {
-    const help = await connection('help').select('*');
+    const { page = 1 } = request.query;
+
+    const maxItemPage = 5
+
+    const [count] = await connection('help').count();
+
+    console.log(count);
+
+    const help = await connection('help')
+    .limit(maxItemPage)
+    .offset((page - 1) * maxItemPage)
+    .select('*');
+
+    response.header('X-Total-Count', count['count(*)']);
+    response.header('X-Total-Page', Math.round(count['count(*)'] / maxItemPage));
 
     return response.json(help);
   },
