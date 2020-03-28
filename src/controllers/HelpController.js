@@ -25,13 +25,13 @@ module.exports = {
     const { id } = request.params;
     const ong_id = request.headers.authorization;
 
-    const help  = await connection('help')
+    const help = await connection('help')
       .where('id', id)
       .select('ong_id')
       .first();
 
     if (help.ong_id !== ong_id) {
-      return response.status(401).json({ error: 'Operation not permitted.'});
+      return response.status(401).json({ error: 'Operation not permitted.' });
     }
 
     await connection('help').where('id', id).delete();
